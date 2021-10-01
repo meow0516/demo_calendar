@@ -223,7 +223,7 @@
         eventTitle: 'event title',
         eventColor: ['blue', 'indigo', 'deep-purple'],
       },
-      // openMenu: false,
+      index: '',
     }),
     mounted () {
       this.$refs.calendar.checkChange();
@@ -246,11 +246,12 @@
       next () {
         this.$refs.calendar.next()
       },
-      showEvent ({ nativeEvent, event }) {
+      showEvent ({ nativeEvent, event, eventParsed }) {
         const open = () => {
           this.selectedEvent = event
           this.selectedElement = nativeEvent.target
           requestAnimationFrame(() => requestAnimationFrame(() => this.selectedOpen = true))
+          this.index = eventParsed.index; 
         }
 
         if (this.selectedOpen) {
@@ -279,8 +280,8 @@
       },
 
       deleteItem(){
-        console.log('delete item');
-        
+        this.events.splice(this.index,1);
+        this.selectedOpen = false;
       },
       editTitle(){
         console.log('editTitle');
