@@ -73,11 +73,45 @@
                   class="addItemCard">新增活動
                 </v-card-title>
                 <v-card-text>
-                  <input type="text" placeholder="活動標題">
+                  <input v-model="itemTitle" type="text" placeholder="活動標題">
                   開始時間<input v-model="startDate" type="date" name="" id="">
                   <input v-model="startTime" type="time" name="" id="">
                   結束時間<input v-model="endDate" type="date" name="" id="">
                   <input v-model="endTime" type="time" name="" id="">
+                  <v-radio-group              
+                    v-model="itemColor"
+                  >活動顏色
+                    <v-radio
+                      label="紅色"
+                      color="red"
+                      value="red"
+                    ></v-radio>
+                    <v-radio
+                      label="粉紅色"
+                      color="pink"
+                      value="pink"
+                    ></v-radio>
+                    <v-radio
+                      label="紫色"
+                      color="purple"
+                      value="purple"
+                    ></v-radio>
+                    <v-radio
+                      label="靛藍色"
+                      color="indigo"
+                      value="indigo"
+                    ></v-radio>
+                    <v-radio
+                      label="青色"
+                      color="cyan"
+                      value="cyan"
+                    ></v-radio>
+                    <v-radio
+                      label="綠色"
+                      color="green"
+                      value="green"
+                    ></v-radio>
+                  </v-radio-group>
                 </v-card-text>
                 <v-card-actions>
                   <v-btn
@@ -212,10 +246,12 @@
       selectedEvent: {},
       selectedElement: null,
       selectedOpen: false,
+      itemTitle: '',
       startDate: '',
       startTime: '',
       endDate: '',
       endTime: '',
+      itemColor: '',
       events: [],
       colors: ['blue', 'indigo', 'deep-purple', 'cyan', 'green', 'orange', 'grey darken-1'],
       names: ['Meeting', 'Holiday', 'PTO', 'Travel', 'Event', 'Birthday', 'Conference', 'Party'],
@@ -266,16 +302,18 @@
       addItem(){
         console.log('additem');
         this.events.push({
-            name: 'test item',
+            name: this.itemTitle,
             start: this.startDate + 'T' + this.startTime,
             end: this.endDate + 'T' + this.endTime,
-            color: 'blue',
+            color: this.itemColor,
             timed: true,
           })
+          this.itemTitle = '';
           this.startDate = '';
           this.startTime = '';
           this.endDate = '';
           this.endTime = '';
+          this.itemColor = '';
         this.addItemOpen = false;
       },
 
