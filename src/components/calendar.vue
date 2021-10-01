@@ -193,9 +193,14 @@
                   @click="editTitle()">
                   <v-icon>mdi-pencil</v-icon>
                 </v-btn>
-                <!-- <v-toolbar-title v-html="selectedEvent.name"></v-toolbar-title> -->
-                <v-toolbar-title>
-                  <input type="text" v-model="calendarEvent.eventTitle">
+                <v-toolbar-title 
+                  v-if="editIndex">
+                  <input 
+                    type="text" 
+                    v-model="calendarEvent.eventTitle">
+                </v-toolbar-title>              
+                <v-toolbar-title 
+                  v-else v-html="selectedEvent.name">
                 </v-toolbar-title>
                 <v-spacer></v-spacer>
                 <v-btn 
@@ -215,8 +220,15 @@
               <v-card-actions>
                 <v-btn
                   text
+                  color="primary"
+                  @click="saveUpdate()"
+                >
+                  Save
+                </v-btn>
+                <v-btn
+                  text
                   color="secondary"
-                  @click="selectedOpen = false"
+                  @click="cancelUpdate()"
                 >
                   Cancel
                 </v-btn>
@@ -256,10 +268,11 @@
       colors: ['blue', 'indigo', 'deep-purple', 'cyan', 'green', 'orange', 'grey darken-1'],
       names: ['Meeting', 'Holiday', 'PTO', 'Travel', 'Event', 'Birthday', 'Conference', 'Party'],
       calendarEvent: {
-        eventTitle: 'event title',
+        eventTitle: '',
         eventColor: ['blue', 'indigo', 'deep-purple'],
       },
       index: '',
+      editIndex: '',
     }),
     mounted () {
       this.$refs.calendar.checkChange();
@@ -322,7 +335,22 @@
         this.selectedOpen = false;
       },
       editTitle(){
-        console.log('editTitle');
+        this.editIndex = this.index;
+        this.calendarEvent.eventTitle = this.selectedEvent.name;
+        // console.log('editTitle');
+        // console.log(this.editIndex);
+      },
+      saveUpdate(){
+        this.events[this.index]['name'] = this.calendarEvent.eventTitle;
+        this.selectedOpen = false; 
+        this.editIndex = '';        
+        // console.log('save update');
+
+      },
+      cancelUpdate(){
+        this.selectedOpen = false; 
+        this.editIndex = '';
+        this.calendarEvent.eventTitle = '';
       },
 
       popFunctionList(){
