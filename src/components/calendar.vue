@@ -73,13 +73,13 @@
                   class="addItemCard">新增活動
                 </v-card-title>
                 <v-card-text>
-                  <input v-model="itemTitle" type="text" placeholder="活動標題">
-                  開始時間<input v-model="startDate" type="date" name="" id="">
-                  <input v-model="startTime" type="time" name="" id="">
-                  結束時間<input v-model="endDate" type="date" name="" id="">
-                  <input v-model="endTime" type="time" name="" id="">
+                  <input v-model="calendarItem.itemTitle" type="text" placeholder="活動標題">
+                  開始時間<input v-model="calendarItem.startDate" type="date" name="" id="">
+                  <input v-model="calendarItem.startTime" type="time" name="" id="">
+                  結束時間<input v-model="calendarItem.endDate" type="date" name="" id="">
+                  <input v-model="calendarItem.endTime" type="time" name="" id="">
                   <v-radio-group              
-                    v-model="itemColor"
+                    v-model="calendarItem.itemColor"
                   >活動顏色
                     <v-radio
                       label="紅色"
@@ -258,12 +258,14 @@
       selectedEvent: {},
       selectedElement: null,
       selectedOpen: false,
-      itemTitle: '',
-      startDate: '',
-      startTime: '',
-      endDate: '',
-      endTime: '',
-      itemColor: '',
+      calendarItem: {
+        itemTitle: '',
+        startDate: '',
+        startTime: '',
+        endDate: '',
+        endTime: '',
+        itemColor: '',
+      },
       events: [],
       colors: ['blue', 'indigo', 'deep-purple', 'cyan', 'green', 'orange', 'grey darken-1'],
       names: ['Meeting', 'Holiday', 'PTO', 'Travel', 'Event', 'Birthday', 'Conference', 'Party'],
