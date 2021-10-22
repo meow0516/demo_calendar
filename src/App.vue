@@ -14,7 +14,33 @@
     </v-app-bar>
 
     <v-main>
-      <GoogleLogin :params="params" :renderParams="renderParams" :onSuccess="onSuccess">login</GoogleLogin>
+
+      <!-- <GoogleLogin :params="params" :renderParams="renderParams" :onSuccess="onSuccess">login</GoogleLogin> -->
+      
+       <div>
+        <div v-if="isSignedIn">
+          <button @click="logout()" type="button">Logout</button>
+          {{ userName }}
+        </div>
+        <button
+          :disabled="isSignedIn === null"
+          @click="login()"
+          type="button"
+          v-if="!isSignedIn"
+        >
+          Login
+        </button>
+
+      </div>
+      <div>
+        <button @click="loadCalendarList()">load calendar list</button>
+        <button @click="loadEvent()">load event</button>
+        <button @click="showEvents()">show events</button>
+        <button @click="getColor()">get color</button>
+      </div>
+      <div>
+        <pre id="content" style="white-space: pre-wrap;"></pre>
+      </div>
       <calendar/>
     </v-main>
   </v-app>
@@ -23,35 +49,80 @@
 
 <script>
 
-// import Signin from './components/signin.vue'
-import GoogleLogin from 'vue-google-login';
-import Calendar from './components/calendar.vue';
+// import GoogleLogin from 'vue-google-login';
+import calendar from './components/calendar.vue';
+// import axios from 'axios';
 
 export default {
   name: 'App',
 
   components: {
-    // Signin,
-    GoogleLogin,
-    Calendar,
+    calendar,
   },
 
   data: () => ({
-    params: {
-      client_id: "642199378747-62svnibd4medlgj1ptd685ol8vf5l322.apps.googleusercontent.com"
-    },
-    renderParams: {
-      width: 250,
-      height: 50,
-      longtitle: true
-    }
+    isSignedIn: null,
+    // token: null,
+
   }),
 
+  created() {
+  //   // (2) Subscribe to authentication status changes
+      this.$gapi.listenUserSignIn((isSignedIn) => {
+      this.isSignedIn = isSignedIn
+    })
+  },
+
   methods: {
-    onSuccess(googleUser) {
-      console.log(googleUser);
-      console.log(googleUser.getBasicProfile());
+    login() {
+        this.$gapi.login().then(
+          ({ currentUser, gapi, hasGrantedScopes }) => {
+          console.log({ currentUser, gapi, hasGrantedScopes })
+          // call a mutation
+          this.$store.state.token = currentUser['$b']['access_token']
+          // console.log(this.$store.state.token);
+        })
+      },
+
+    logout() {
+      this.$gapi.logout()
+    },
+
+    loadEvent(){
+      this.$store.dispatch("loadEvent");
+    },
+    
+    loadCalendarList(){
+      this.$store.dispatch("loadCalendarList");
+    },
+    showEvents(){
+      console.log(this.$store.state.events)
+    },
+    getColor(){
+      this.$store.dispatch("getColor")
+    },
+
+  },
+
+  computed: {
+    userName() {
+    //   // (4) Display authenticated user name
+     let user = this.$gapi.getUserData()
+
+      if (user) {
+        return user.email
+      }
+      else{
+        return '';
+      }
     },
   },
 };
 </script>
+
+<style lang="scss" scoped>
+button{
+  padding: 5px;
+  border: 1px solid black;
+}
+</style>
