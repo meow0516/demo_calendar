@@ -90,6 +90,34 @@ export default new Vuex.Store({
       // // console.log(state.events)
     
     },
+
+    addEvent(state, calendarItem){
+      state.events.push(
+       {
+            name: calendarItem.itemTitle,
+            start: function(){
+              if( calendarItem.allDay ){
+                return calendarItem.startDate
+              }
+              else{
+                return calendarItem.startDate +"T"+ calendarItem.startTime
+              }
+            }(),
+            end: function(){
+              if( calendarItem.allDay ){
+                return calendarItem.endDate
+              }
+              else{
+                return calendarItem.endDate +"T"+ calendarItem.endTime
+              }
+            }(),
+            
+            color: 'green',
+            timed: calendarItem.allDay,
+          }
+      )
+    }
+  },
   actions: {    
     loadCalendarList(){
       let that = this;
@@ -141,8 +169,87 @@ export default new Vuex.Store({
         
       }
     },
+
+    addEvent({commit},calendarItem){
+      // let that = this;
+      console.log(calendarItem)
+      
+      let googleCalendarApi = this._vm.$gapi.clientProvider.client
+      // let calendarItem = getters.calendarItem
+
+      googleCalendarApi.gapi.client.calendar.events.insert({
+        "calendarId": calendarItem.calendarId,
+        "resource": {
+          "summary": calendarItem.itemTitle,
+          "start": function(){
+              if ( calendarItem.allDay){
+                return { 
+                  "date": calendarItem.startDate
+                }
+              }
+              else
+              {
+                return {
+                  "dateTime": new Date(calendarItem.startDate +" "+ calendarItem.startTime).toISOString()
+                }
+              } 
+            }(),
+          "end": function(){
+              if ( calendarItem.allDay){
+                return { 
+                  "date": calendarItem.endDate
+                }
+              }
+              else
+              {
+                return {
+                  "dateTime": new Date(calendarItem.endDate +" "+ calendarItem.endTime).toISOString()
+                }
+              } 
+            }(),
+          "colorId": calendarItem.itemColorId,
+        }
+      })
+      
+      .then(function() {
+        // Handle the results here (response.result has the parsed body).
+        // console.log("Response", response)
+        commit('addEvent',calendarItem)
+      },
+      function(err) { console.error("Execute error", err); });
+      
+    },
   },
-  actions: {
+  getters: {
+    // calendarItem(){
+    //   calendarId = calendarItem.calendarId;
+    //   summary = calendarItem.itemTitle;
+    //   start = function(){
+    //     if ( calendarItem.allDay){
+    //       return { 
+    //         "date": calendarItem.startDate
+    //       }
+    //     }
+    //     else
+    //     {
+    //       return {
+    //         "dateTime": (calendarItem.startDate + 'T' + calendarItem.startTime).toISOString()
+    //       }
+    //     }
+    //   };
+    //   end = function(){
+    //     if ( calendarItem.allDay){
+    //       return {
+    //         "date": calendarItem.endDate
+    //       }
+    //     }
+    //     else
+    //     {
+    //       return b
+    //     }
+    //   };;
+    //   colorId = calendarItem.itemColorId;
+    // }
   },
   modules: {
   }

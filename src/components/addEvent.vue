@@ -30,7 +30,15 @@
             </v-card-title>
             <v-card-text>
                 <!-- title -->
-                <input v-model="calendarItem.itemTitle" type="text" placeholder="活動標題">
+                <v-text-field
+                 v-model="calendarItem.itemTitle" 
+                 type="text" 
+                 placeholder="活動標題"
+                ></v-text-field>
+                <v-checkbox
+                    v-model="calendarItem.allDay"
+                    label="全天"
+                ></v-checkbox>  
                 <!-- start date -->
                 <v-menu
                 offset-y>
@@ -44,17 +52,21 @@
                 </template>
                     <v-row justify="center">
                     <v-date-picker 
+                    show-week
+                    show-adjacent-months
+                    picker-date
                     v-model="calendarItem.startDate"></v-date-picker>
                     </v-row>
                 </v-menu>
                 <!-- start time -->      
-                <v-menu
+                <v-menu                
                 :close-on-content-click="false"
                 offset-y>
                 <template v-slot:activator="{on}">
                     <v-btn 
-                    depressed
+                    depressed                    
                     v-on="on"
+                    v-show="!calendarItem.allDay"
                     @click="timeInput=true">
                     開始時間
                     {{ calendarItem.startTime}}
@@ -94,7 +106,9 @@
                     </v-btn>
                 </template>
                     <v-row justify="center">
-                    <v-date-picker v-model="calendarItem.endDate"></v-date-picker>
+                    <v-date-picker 
+                    picker-date
+                    v-model="calendarItem.endDate"></v-date-picker>
                     </v-row>
                 </v-menu>
                 <!-- end time -->
@@ -104,6 +118,7 @@
                 <template v-slot:activator="{on}">
                     <v-btn 
                     depressed
+                    v-show="!calendarItem.allDay"
                     v-on="on"
                     @click="timeInput=true">
                     結束時間
@@ -209,11 +224,11 @@
   export default {
     name: 'addEvent',
 
-    data: () => ({
-        timeInput: false,
+data: () => ({
+    timeInput: false,
       // add item
-      addItemOpen: false,
-      calendarItem: {
+    addItemOpen: false,
+    calendarItem: {
         itemTitle: '',
         startDate: '',
         startTime: '',
@@ -221,60 +236,51 @@
         endTime: '',
         calendarId: '',
         itemColorId: '',
-      },
+        allDay: false,  
+    },
 
 
     }),
-    mounted () {
+mounted () {
       
+},
+methods: {
+    addItem(){
+    // console.log(this.calendarItem);
+     this.$store.dispatch("addEvent",this.calendarItem)
     },
-    methods: {
-      addItem(){
-        console.log(this.calendarItem);
-        this.$store.dispatch("addEvent",this.calendarItem)
-        // this.$store.dispatch("addEvent")
-        // this.events.push({
-        //     name: this.calendarItem.itemTitle,
-        //     start: this.calendarItem.startDate + 'T' + this.calendarItem.startTime,
-        //     end: this.calendarItem.endDate + 'T' + this.calendarItem.endTime,
-        //     color: this.calendarItem.itemColor,
-        //     timed: true,
-        //   })
-        //   this.calendarItem.itemTitle = '';
-        //   this.calendarItem.startDate = '';
-        //   this.calendarItem.startTime = '';
-        //   this.calendarItem.endDate = '';
-        //   this.calendarItem.endTime = '';
-        //   this.calendarItem.itemColor = '';
-        // this.addItemOpen = false;
-      },
-      cancelInputTime(){
+    cancelInputTime(){
+        this.calendarItem.startTime = '';
+        this.calendarItem.endTime = '';
         this.timeInput = false;
-      },
-      saveInputTime(){
+
+    },
+    saveInputTime(){
         this.timeInput = false;
-      },
-      cancelAdd(){
+    },
+    cancelAdd(){
         this.calendarItem.itemTitle = '';
         this.calendarItem.startDate = '';
         this.calendarItem.startTime = '';
         this.calendarItem.endDate = '';
         this.calendarItem.endTime = '';
-        this.calendarItem.itemColor = '';
+        this.calendarId= '';
+        this.calendarItem.itemColorId = '';
+        this.allDay= false;
         this.addItemOpen = false;
-      },
-
     },
 
-    computed: {
-        calendarLists(){
-            return this.$store.state.calendarLists
-        },
-        eventColors(){
-            return this.$store.state.eventColors
-        },
+},
+
+computed: {
+    calendarLists(){
+        return this.$store.state.calendarLists
     },
+    eventColors(){
+        return this.$store.state.eventColors
+    },
+},
 
   
-  }
+}
 </script>
