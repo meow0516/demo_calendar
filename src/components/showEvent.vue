@@ -314,9 +314,10 @@
         nativeEvent.stopPropagation()
       },
       
-      deleteItem(){
+      deleteItem(){        
+        this.$store.dispatch("deleteEvent",this.selectedEvent)
         this.events.splice(this.index,1);
-        this.selectedOpen = false;
+        this.selectedOpen = false;        
       },
       updateItem(){
         this.editIndex = this.index;

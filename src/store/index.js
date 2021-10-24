@@ -35,7 +35,6 @@ export default new Vuex.Store({
       calendarListItems.forEach(calendarListItem => {
         state.calendarLists.push(calendarListItem)
       });
-      // console.log(state.calendarLists)
     },
 
     setColor(state, [calendarColors, eventColors]){
@@ -46,9 +45,10 @@ export default new Vuex.Store({
       // console.log(state.calendarColors)
     },
  
-    setEvents(state,calendarEvents){
+    setEvents(state, [calendarEvents, calendarId]){
       calendarEvents.forEach(calendarEvent => {
         // console.log(calendarEvent)
+        calendarEvent.calendarId = calendarId
         calendarEvent.name = calendarEvent.summary
         // console.log(calendarEvent.colorId);
         // console.log(state.calendarColors[calendarEvent.colorId]);
@@ -57,9 +57,11 @@ export default new Vuex.Store({
         // calendarEvent.start = moment(calendarEvent.start.dateTime).format('YYYY-MM-DD')+'T'+moment(calendarEvent.start.dateTime).format('HH:mm')
         calendarEvent.timed = function(){
           let timeString = calendarEvent.start
+          // all-day event: timed = false
           if ( 'date' in timeString){
             return false
           }
+          // specific-time event: timed = true
           else{
             return true
           }
@@ -85,9 +87,9 @@ export default new Vuex.Store({
         
 
         state.events.push(calendarEvent)
-        
+        // console.log(state.events)
       });
-      // // console.log(state.events)
+      console.log(state.events)
     
     },
 
@@ -126,21 +128,15 @@ export default new Vuex.Store({
       googleCalendarApi.gapi.client.calendar.calendarList.list({
         'calendarId': 'primary',
       }).then(function(response) {
-          console.log(response);
           let calendarListItems = response.result.items
           that.commit('setCalendarList',calendarListItems)
       });
 
       googleCalendarApi.gapi.client.calendar.colors.get({
       }).then(function(response){
-        // console.log(response)
-        // let calendarColors = response.result
         let calendarColor = response.result.calendar
         let eventColor = response.result.event
-        that.commit('setColor', [calendarColor, eventColor])
-
-        // console.log(response)
-        
+        that.commit('setColor', [calendarColor, eventColor])        
       })
     },
 
@@ -162,8 +158,9 @@ export default new Vuex.Store({
           }).then(function(response) {
             // console.log(response)
             let calendarEvents = response.result.items
+            let calendarId = that.state.calendarLists[i].id
             // // console.log(calendarEvents)          
-            that.commit('setEvents',calendarEvents);
+            that.commit('setEvents',[calendarEvents,calendarId]);
   
           });
         
@@ -171,9 +168,7 @@ export default new Vuex.Store({
     },
 
     addEvent({commit},calendarItem){
-      // let that = this;
-      console.log(calendarItem)
-      
+      // let that = this;      
       let googleCalendarApi = this._vm.$gapi.clientProvider.client
       // let calendarItem = getters.calendarItem
 
@@ -218,6 +213,21 @@ export default new Vuex.Store({
       },
       function(err) { console.error("Execute error", err); });
       
+    },
+
+    deleteEvent({commit},calendarItem){
+      let googleCalendarApi = this._vm.$gapi.clientProvider.client
+      googleCalendarApi.gapi.client.calendar.events.delete({
+        "calendarId": calendarItem.calendarId,
+        "eventId": calendarItem.id,
+      }).then(function(response) {
+        // Handle the results here (response.result has the parsed body).
+        console.log("Response", response);
+      },
+      function(err) { console.error("Execute error", err); });
+
+      // console.log(calendarItem)
+      return commit
     },
   },
   getters: {
