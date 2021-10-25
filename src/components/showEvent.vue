@@ -52,6 +52,10 @@
 
         <!-- card at edit mode -->
         <v-card-text  v-if="index === editIndex">
+          <v-checkbox
+            v-model="selectedEvent.allDay"
+            label="全天"
+          ></v-checkbox> 
           <!-- start date-->
             <v-menu
               offset-y>
@@ -80,8 +84,8 @@
               <template v-slot:activator="{on}">
                   <v-btn 
                   depressed                    
+                  v-show="!(selectedEvent.allDay)"
                   v-on="on"
-                  v-show="!calendarItem.allDay"
                   @click="timeInput=true">
                   開始時間
                   {{ calendarEvent.startTime }}
@@ -132,8 +136,8 @@
                 <template v-slot:activator="{on}">
                     <v-btn 
                     depressed
-                    v-show="!calendarItem.allDay"
                     v-on="on"
+                    v-show="!(selectedEvent.allDay)"
                     @click="timeInput=true">
                     結束時間
                     {{ calendarEvent.endTime}}
@@ -168,14 +172,14 @@
             <v-radio-group              
               v-model="calendarEvent.itemColor"
             >活動顏色
-              <v-radio 
+              <!-- <v-radio 
                 v-for="(eventColor,index) in eventColors"
                 :key="eventColor.index"
                 :label="index"
                 :color="eventColor.background"
                 :value="index">
-              </v-radio>
-              <!-- <v-radio
+              </v-radio> -->
+              <v-radio
                 label="紅色"
                 color="red"
                 value="red"
@@ -204,15 +208,23 @@
                 label="綠色"
                 color="green"
                 value="green"
-              ></v-radio> -->
+              ></v-radio>
             </v-radio-group>
           </v-card-text>
           <!-- card at view mode -->
           <v-card-text v-else>
-            開始日期  {{ moment(selectedEvent.start).format('YYYY-MM-DD') }}
-            開始時間  {{ moment(selectedEvent.start).format('LT') }}
-            結束日期  {{ moment(selectedEvent.end).format('YYYY-MM-DD') }}
-            結束時間  {{ moment(selectedEvent.end).format('LT') }}
+            <div>
+              開始日期  {{ moment(selectedEvent.start).format('YYYY-MM-DD') }}
+            </div>
+            <div v-show="!(selectedEvent.allDay)">
+              開始時間  {{ moment(selectedEvent.start).format('LT') }}
+            </div>
+            <div>
+              結束日期  {{ moment(selectedEvent.end).format('YYYY-MM-DD') }}
+            </div>
+            <div v-show="!(selectedEvent.allDay)">
+              結束時間  {{ moment(selectedEvent.end).format('LT') }}
+            </div>
           </v-card-text>
         <v-card-actions>
           <v-btn
@@ -253,11 +265,11 @@
       // display select event
       selectedEvent: {
         start: null,
-        end: null
+        end: null,
+        allDay: null,
       },
       selectedElement: null,
       selectedOpen: false,
-
 
       // edit event
       calendarEvent: {
@@ -266,19 +278,21 @@
         startTime: '',
         endDate: '',
         endTime: '',
+        // allDay: false,
         itemColor: ['blue', 'indigo', 'deep-purple'],
       },
       // events: [],
       colors: ['blue', 'indigo', 'deep-purple', 'cyan', 'green', 'orange', 'grey darken-1'],
-      names: ['Meeting', 'Holiday', 'PTO', 'Travel', 'Event', 'Birthday', 'Conference', 'Party'],
       index: '',
       editIndex: '',
       timeInput: false,
     }),
-     mounted () {
+
+    mounted () {
       this.$refs.calendar.checkChange();
       // console.log(this.events);
     },
+
     methods: {
       viewDay ({ date }) {
         this.focus = date
@@ -300,6 +314,7 @@
         const open = () => {
           this.selectedEvent = event
           this.selectedElement = nativeEvent.target
+          this.selectedEvent.allDay = eventParsed.allDay
           requestAnimationFrame(() => requestAnimationFrame(() => this.selectedOpen = true))
           this.index = eventParsed.index; 
         }
@@ -310,38 +325,74 @@
         } else {
           open()
         }
-
+        console.log(event)
+        console.log(this.selectedEvent)
         nativeEvent.stopPropagation()
       },
+
+      updateItem(){
+        this.editIndex = this.index;
+        console.log(this.selectedEvent);
+        this.calendarEvent = this.selectedEvent
+        this.calendarEvent.allDay = this.selectedEvent.allDay;
+        this.calendarEvent.itemTitle = this.selectedEvent.name;
+        this.calendarEvent.startDate = moment(this.selectedEvent.start).format('YYYY-MM-DD');
+        this.calendarEvent.startTime = moment(this.selectedEvent.start).format('HH:mm');
+        this.calendarEvent.endDate =  moment(this.selectedEvent.end).format('YYYY-MM-DD');
+        this.calendarEvent.endTime = moment(this.selectedEvent.end).format('HH:mm');
+        // this.calendarEvent.itemColor = this.selectedEvent.color;
+
+      },
+      saveUpdate(){
+        this.events[this.index]['name'] = this.calendarEvent.itemTitle;
+        this.events[this.index]['start'] = this.calendarEvent.startDate + "T" + this.calendarEvent.startTime;
+        this.events[this.index]['end'] = this.calendarEvent.endDate + "T" + this.calendarEvent.endTime;
+        this.events[this.index]['color'] = this.calendarEvent.itemColor;
+        // console.log('check before return')
+        // console.log(this.calendarEvent)
+        this.$store.dispatch("saveEvent", this.calendarEvent)
+
+        // this.selectedOpen = false; 
+        // this.calendarEvent.itemTitle = '';
+        // this.calendarEvent.startDate = '';
+        // this.calendarEvent.startTime = '';
+        // this.calendarEvent.endDate = '';
+        // this.calendarEvent.endTime = '';
+        // this.calendarEvent.itemColor = '';
+        // this.editIndex = '';        
+        // console.log("save update")
+      },
+      cancelUpdate(){
+        this.selectedOpen = false; 
+        this.calendarEvent.itemTitle = '';
+        this.calendarEvent.startDate = '';
+        this.calendarEvent.startTime = '';
+        this.calendarEvent.endDate = '';
+        this.calendarEvent.endTime = '';
+        this.calendarEvent.itemColor = '';
+        this.editIndex = '';
+        console.log("cancel update")
+      },
+
+      saveInputTime(){
+        console.log(this.timeInput);
+        this.timeInput = false;
+      },
+
+      cancelInputTime(){
+
+        // let currentTime = this.calendarEvent.startTime
+        // this.calendarEvent.startTime = moment(this.selectedEvent.start).format('hh:mm');
+        // this.calendarEvent.endTime = moment(this.selectedEvent.end).format('hh:mm');
+        console.log(this.timeInput)
+        this.timeInput = false;
+      },
+
       
       deleteItem(){        
         this.$store.dispatch("deleteEvent",this.selectedEvent)
         this.events.splice(this.index,1);
         this.selectedOpen = false;        
-      },
-      updateItem(){
-        this.editIndex = this.index;
-        console.log(this.selectedEvent);
-        this.calendarEvent.itemTitle = this.selectedEvent.name;
-        this.calendarEvent.startDate = moment(this.selectedEvent.start).format('YYYY-MM-DD');
-        this.calendarEvent.startTime = moment(this.selectedEvent.start).format('hh:mm');
-        this.calendarEvent.endDate =  moment(this.selectedEvent.end).format('YYYY-MM-DD');
-        this.calendarEvent.endTime = moment(this.selectedEvent.end).format('hh:mm');
-        this.calendarEvent.itemColor = this.selectedEvent.color;
-
-      },
-      saveUpdate(){
-        this.events[this.index]['name'] = this.calendarEvent.itemTitle;
-        this.events[this.index]['color'] = this.calendarEvent.itemColor;
-        this.selectedOpen = false; 
-        this.calendarEvent.itemColor = '';
-        this.editIndex = '';        
-
-      },
-      cancelUpdate(){
-        this.selectedOpen = false; 
-        this.editIndex = '';
-        this.calendarEvent.itemTitle = '';
       },
 
       popFunctionList(){
