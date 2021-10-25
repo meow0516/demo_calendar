@@ -57,31 +57,34 @@ export default new Vuex.Store({
         // calendarEvent.start = moment(calendarEvent.start.dateTime).format('YYYY-MM-DD')+'T'+moment(calendarEvent.start.dateTime).format('HH:mm')
         calendarEvent.timed = function(){
           let timeString = calendarEvent.start
-          // all-day event: timed = false
-          if ( 'date' in timeString){
-            return false
-          }
           // specific-time event: timed = true
-          else{
+          if ( 'dateTime' in timeString){
             return true
+          }
+          // all-day event: timed = false
+          else{
+            return false
           }
         }()
         calendarEvent.start = function(){
           let timeString = calendarEvent.start
-          if ( 'date' in timeString){
-            return calendarEvent.start.date
+          if ( 'dateTime' in timeString){
+            return moment(calendarEvent.start.dateTime).format('YYYY-MM-DD')+'T'+moment(calendarEvent.start.dateTime).format('HH:mm')
           }
           else{
-            return moment(calendarEvent.start.dateTime).format('YYYY-MM-DD')+'T'+moment(calendarEvent.start.dateTime).format('HH:mm')
+            return calendarEvent.start.date
           }
         }()
         calendarEvent.end = function(){
           let timeString = calendarEvent.end
-          if ( 'date' in timeString){
-            return calendarEvent.end.date - 1
+          if ( 'dateTime' in timeString){
+            return moment(calendarEvent.end.dateTime).format('YYYY-MM-DD')+'T'+moment(calendarEvent.end.dateTime).format('HH:mm')
           }
           else{
-            return moment(calendarEvent.end.dateTime).format('YYYY-MM-DD')+'T'+moment(calendarEvent.end.dateTime).format('HH:mm')
+            let dt = new Date(calendarEvent.end.date)
+            return (
+              dt.setDate(dt.getDate()-1)
+            )
           }
         }()
         
