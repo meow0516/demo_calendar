@@ -149,13 +149,15 @@
                 </v-menu>
                 <!-- calendar ID -->
                 <v-radio-group              
-                v-model="calendarItem.calendarId"
+                v-model="calendarItem.calendarIndex"
                 >日曆名稱
                 <v-radio v-for="(calendarList) in calendarLists"
                     :key="calendarList.index"
                     :label="calendarList.summary"
-                    :value="calendarList.id">
+                    :value="calendarList.index"
+                    :color="calendarList.backgroundColor">
                 </v-radio>
+                <!-- :value="calendarList.id" -->
                 </v-radio-group>
                 <!-- calendar color -->
                 <v-radio-group              
@@ -234,7 +236,8 @@ data: () => ({
         startTime: '',
         endDate: '',
         endTime: '',
-        calendarId: '',
+        calendarIndex: '',
+        // calendarId: '',
         itemColorId: '',
         allDay: false,  
     },
@@ -246,7 +249,7 @@ mounted () {
 },
 methods: {
     addItem(){
-    // console.log(this.calendarItem);
+    console.log(this.calendarItem);
      this.$store.dispatch("addEvent",this.calendarItem)
     },
     cancelInputTime(){

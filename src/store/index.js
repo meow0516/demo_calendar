@@ -76,6 +76,9 @@ export default new Vuex.Store({
     },
 
     addEvent(state, calendarItem){
+      let index = calendarItem.calendarIndex
+      let calendar = state.calendarLists[index]
+      let calendarColorId = calendar['colorId']
       state.events.push(
        {
             name: calendarItem.itemTitle,
@@ -95,8 +98,16 @@ export default new Vuex.Store({
                 return calendarItem.endDate +"T"+ calendarItem.endTime
               }
             }(),
-            
-            color: 'green',
+            color: function(){
+              if( !calendarItem.itemColorId ){
+                return  state.calendarColors[calendarColorId]['background']
+                // that.state.calendarLists[calendarItem.calendarIndex]['colorId']
+              }
+              else{
+                return state.eventColors[calendarItem.itemColorId]['background']
+              }
+            }(),
+           
             timed: calendarItem.allDay,
           }
       )
@@ -150,12 +161,12 @@ export default new Vuex.Store({
     },
 
     addEvent({commit},calendarItem){
-      // let that = this;      
+      let that = this;      
       let googleCalendarApi = this._vm.$gapi.clientProvider.client
       // let calendarItem = getters.calendarItem
 
       googleCalendarApi.gapi.client.calendar.events.insert({
-        "calendarId": calendarItem.calendarId,
+        "calendarId": that.state.calendarLists[calendarItem.calendarIndex]['id'],
         "resource": {
           "summary": calendarItem.itemTitle,
           "start": function(){
@@ -184,13 +195,21 @@ export default new Vuex.Store({
                 }
               } 
             }(),
-          "colorId": calendarItem.itemColorId,
+          "colorId": 
+          function(){
+            if( !calendarItem.itemColorId ){
+              return that.state.calendarLists[calendarItem.calendarIndex]['colorId']
+            }
+            else{
+              return calendarItem.itemColorId
+            }
+          },
         }
       })
       
-      .then(function() {
+      .then(function(response) {
         // Handle the results here (response.result has the parsed body).
-        // console.log("Response", response)
+        console.log("Response", response)
         commit('addEvent',calendarItem)
       },
       function(err) { console.error("Execute error", err); });
