@@ -7,28 +7,11 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-    // isSignedIn: null,
     token: null,
     events: [],
     calendarLists: [],
-    // {
-    //   id: [],
-    //   colorId: [],
-    //   backgroundColor: [],
-    // },
     calendarColors: {},
     eventColors: {},
-    // calendarItems: [],
-    // calendarEvent: [],
-    // calendarEvent: [],
-    // calendarEvent: {
-    //   itemTitle: '',
-    //   startDate: '',
-    //   startTime: '',
-    //   endDate: '',
-    //   endTime: '',
-    //   itemColor: ['blue', 'indigo', 'deep-purple'],
-    // },
   },
   mutations: {
     setCalendarList(state, calendarListItems){
@@ -38,23 +21,19 @@ export default new Vuex.Store({
     },
 
     setColor(state, [calendarColors, eventColors]){
-      
       state.calendarColors = Object.assign({},calendarColors)
       state.eventColors = Object.assign({},eventColors)
       // console.log(state.eventColors)
       // console.log(state.calendarColors)
     },
  
-    setEvents(state, [calendarEvents, calendarId]){
+    setEvents(state, [calendarEvents, calendarId, calendarColorId]){
       calendarEvents.forEach(calendarEvent => {
         // console.log(calendarEvent)
         calendarEvent.calendarId = calendarId
         calendarEvent.name = calendarEvent.summary
-        // console.log(calendarEvent.colorId);
-        // console.log(state.calendarColors[calendarEvent.colorId]);
-        calendarEvent.color = calendarEvent.colorId? state.calendarColors[calendarEvent.colorId]['background']:'blue'
-        // calendarEvent.color = 'blue'
-        // calendarEvent.start = moment(calendarEvent.start.dateTime).format('YYYY-MM-DD')+'T'+moment(calendarEvent.start.dateTime).format('HH:mm')
+        calendarEvent.calendarColorId = calendarColorId
+        calendarEvent.color = calendarEvent.colorId? state.eventColors[calendarEvent.colorId]['background']:state.calendarColors[calendarEvent.calendarColorId]['background']
         calendarEvent.timed = function(){
           let timeString = calendarEvent.start
           // specific-time event: timed = true
@@ -152,7 +131,6 @@ export default new Vuex.Store({
        
         googleCalendarApi.gapi.client.calendar.events.list({
             'calendarId': this.state.calendarLists[i].id,
-            // 'timeMin': (new Date()).toISOString(),
             'timeMax': (new Date(2024,1,1)).toISOString(),
             'timeMin': (new Date(2021,9,1)).toISOString(),
             'showDeleted': false,
@@ -163,9 +141,9 @@ export default new Vuex.Store({
             // console.log(response)
             let calendarEvents = response.result.items
             let calendarId = that.state.calendarLists[i].id
-            // // console.log(calendarEvents)          
-            that.commit('setEvents',[calendarEvents,calendarId]);
-  
+            let calendarColorId = that.state.calendarLists[i].colorId
+            // console.log(calendarEvents)          
+            that.commit('setEvents',[calendarEvents, calendarId, calendarColorId]);  
           });
         
       }
