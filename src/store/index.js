@@ -112,6 +112,11 @@ export default new Vuex.Store({
           }
       )
     }
+    clearEvents(state){
+      state.events = [];
+      state.calendarLists = [];
+      state.calendarColors = {};
+      state.eventColors = {};
     },
   },
   actions: {    

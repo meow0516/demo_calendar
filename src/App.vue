@@ -86,6 +86,7 @@ export default {
 
     logout() {
       this.$gapi.logout()
+      this.$store.commit("clearEvents")
     },
 
     loadEvent(){
