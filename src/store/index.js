@@ -75,7 +75,7 @@ export default new Vuex.Store({
     
     },
 
-    addEvent(state, calendarItem){
+    addEvent(state, [calendarItem, calendarId, id]){
       let index = calendarItem.calendarIndex
       let calendar = state.calendarLists[index]
       let calendarColorId = calendar['colorId']
@@ -109,6 +109,8 @@ export default new Vuex.Store({
             }(),
            
             timed: calendarItem.allDay,
+            calendarId: calendarId,
+            id: id,
           }
       )
     }
@@ -215,7 +217,9 @@ export default new Vuex.Store({
       .then(function(response) {
         // Handle the results here (response.result has the parsed body).
         console.log("Response", response)
-        commit('addEvent',calendarItem)
+        let calendarId = that.state.calendarLists[calendarItem.calendarIndex]['id']
+        let id = response.result.id
+        commit('addEvent',[calendarItem, calendarId, id])
       },
       function(err) { console.error("Execute error", err); });
       
