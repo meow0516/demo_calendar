@@ -211,6 +211,7 @@ export default new Vuex.Store({
               return calendarItem.itemColorId
             }
           },
+          }(),
         }
       })
       
