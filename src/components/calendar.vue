@@ -292,10 +292,10 @@
         this.focus = ''
       },
       prev () {
-        this.$refs.calendar.prev()
+        this.$children[1].$refs.calendar.prev()
       },
       next () {
-        this.$refs.calendar.next()
+        this.$children[1].$refs.calendar.next()
       },
       showEvent ({ nativeEvent, event, eventParsed }) {
         const open = () => {
