@@ -9,15 +9,26 @@ export default new Vuex.Store({
   state: {
     token: null,
     events: [],
+    focus: '',
     calendarLists: [],
     calendarColors: {},
     eventColors: {},
+    type: 'month',
+    typeToLabel: {
+      month: 'Month',
+      week: 'Week',
+      day: 'Day',
+      '4day': '4 Days',       
+    },
+
   },
+
   mutations: {
     setCalendarList(state, calendarListItems){
       calendarListItems.forEach(calendarListItem => {
         state.calendarLists.push(calendarListItem)
       });
+      console.log(state.calendarLists)
     },
 
     setColor(state, [calendarColors, eventColors]){
@@ -114,6 +125,15 @@ export default new Vuex.Store({
           }
       )
     }
+    changeRange(state, type){
+      state.type = type;
+    },
+    setToday(state) {    
+      state.focus = ''
+    },
+    viewDate(state, date){
+      state.focus = date
+    },
     clearEvents(state){
       state.events = [];
       state.calendarLists = [];

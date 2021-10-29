@@ -254,14 +254,6 @@
     name: 'calendar',
 
     data: () => ({
-      focus: '',
-      type: 'month',
-      typeToLabel: {
-        month: 'Month',
-        week: 'Week',
-        day: 'Day',
-        '4day': '4 Days',
-      },
       // display select event
       selectedEvent: {
         start: null,
@@ -295,20 +287,11 @@
 
     methods: {
       viewDay ({ date }) {
-        this.focus = date
-        this.type = 'day'
+        this.$store.commit("viewDate", date)
+        this.$store.state.type = 'day'
       },
       getEventColor (event) {
         return event.color
-      },
-      setToday () {
-        this.focus = ''
-      },
-      prev () {
-        this.$refs.calendar.prev()
-      },
-      next () {
-        this.$refs.calendar.next()
       },
       showEvent ({ nativeEvent, event, eventParsed }) {
         const open = () => {
@@ -404,6 +387,17 @@
       },
     },
     computed: {
+      type(){
+        return this.$store.state.type
+      },
+      focus:{
+        get: function(){
+          return this.$store.state.focus
+        },
+        set: function(date){
+          this.$store.state.focus = date
+        },
+      },
       events(){
         return this.$store.state.events
       },
