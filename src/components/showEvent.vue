@@ -165,21 +165,17 @@
                     </v-btn>
                 </v-time-picker>
                 </v-menu>
-            <!-- <input v-model="calendarEvent.startDate" type="date" name="" id="">
-            <input v-model="calendarEvent.startTime" type="time" name="" id="">
-            結束時間<input v-model="calendarEvent.endDate" type="date" name="" id="">
-            <input v-model="calendarEvent.endTime" type="time" name="" id=""> -->
             <v-radio-group              
-              v-model="calendarEvent.itemColor"
+              v-model="calendarEvent.colorId"
             >活動顏色
-              <!-- <v-radio 
+              <v-radio 
                 v-for="(eventColor,index) in eventColors"
                 :key="eventColor.index"
                 :label="index"
                 :color="eventColor.background"
                 :value="index">
-              </v-radio> -->
-              <v-radio
+              </v-radio>
+              <!-- <v-radio
                 label="紅色"
                 color="red"
                 value="red"
@@ -208,7 +204,7 @@
                 label="綠色"
                 color="green"
                 value="green"
-              ></v-radio>
+              ></v-radio> -->
             </v-radio-group>
           </v-card-text>
           <!-- card at view mode -->
@@ -272,6 +268,8 @@
         endTime: '',
         // allDay: false,
         itemColor: ['blue', 'indigo', 'deep-purple'],
+        itemColor: '',
+        colorId: '',
       },
       // events: [],
       colors: ['blue', 'indigo', 'deep-purple', 'cyan', 'green', 'orange', 'grey darken-1'],
@@ -323,17 +321,12 @@
         this.calendarEvent.startTime = moment(this.selectedEvent.start).format('HH:mm');
         this.calendarEvent.endDate =  moment(this.selectedEvent.end).format('YYYY-MM-DD');
         this.calendarEvent.endTime = moment(this.selectedEvent.end).format('HH:mm');
+        this.calendarEvent.colorId = this.selectedEvent.colorId;
         // this.calendarEvent.itemColor = this.selectedEvent.color;
 
       },
       saveUpdate(){
-        this.events[this.index]['name'] = this.calendarEvent.itemTitle;
-        this.events[this.index]['start'] = this.calendarEvent.startDate + "T" + this.calendarEvent.startTime;
-        this.events[this.index]['end'] = this.calendarEvent.endDate + "T" + this.calendarEvent.endTime;
-        this.events[this.index]['color'] = this.calendarEvent.itemColor;
-        // console.log('check before return')
-        // console.log(this.calendarEvent)
-        this.$store.dispatch("saveEvent", this.calendarEvent)
+        this.$store.dispatch("saveEvent", [this.index,this.calendarEvent])
 
         // this.selectedOpen = false; 
         // this.calendarEvent.itemTitle = '';
@@ -397,6 +390,9 @@
         set: function(date){
           this.$store.state.focus = date
         },
+      },
+      eventColors(){
+        return this.$store.state.eventColors
       },
       events(){
         return this.$store.state.events

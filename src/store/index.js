@@ -80,9 +80,8 @@ export default new Vuex.Store({
         
 
         state.events.push(calendarEvent)
-        // console.log(state.events)
       });
-      console.log(state.events)
+      // console.log(state.events)
     
     },
 
@@ -124,7 +123,9 @@ export default new Vuex.Store({
             id: id,
           }
       )
-    }
+      console.log(state.events)
+    },
+
     changeRange(state, type){
       state.type = type;
     },
@@ -133,6 +134,28 @@ export default new Vuex.Store({
     },
     viewDate(state, date){
       state.focus = date
+    },
+
+    saveEvent(state, [index, calendarItem]){
+      state.events[index].name = calendarItem.itemTitle
+      state.events[index].start = function(){
+        if(calendarItem.allDay){
+          return calendarItem.startDate
+        }
+        else{
+          return calendarItem.startDate + "T" + calendarItem.startTime
+        }
+        }();
+      state.events[index].end = function(){
+        if(calendarItem.allDay){
+          return calendarItem.endDate
+        }
+        else{
+          return calendarItem.endDate + "T" + calendarItem.endTime;
+        }
+        }();
+      state.events[index].color = calendarItem.colorId? state.eventColors[calendarItem.colorId].background: state.events[index].color;
+      
     },
     clearEvents(state){
       state.events = [];
@@ -151,6 +174,7 @@ export default new Vuex.Store({
       }).then(function(response) {
           let calendarListItems = response.result.items
           that.commit('setCalendarList',calendarListItems)
+          console.log(response)
       });
 
       googleCalendarApi.gapi.client.calendar.colors.get({
@@ -230,7 +254,6 @@ export default new Vuex.Store({
             else{
               return calendarItem.itemColorId
             }
-          },
           }(),
         }
       })
@@ -243,6 +266,62 @@ export default new Vuex.Store({
         commit('addEvent',[calendarItem, calendarId, id])
       },
       function(err) { console.error("Execute error", err); });
+      
+    },
+
+    saveEvent({commit},[index,calendarItem]){
+      console.log("calendar ID")
+      console.log(calendarItem.calendarId)
+      console.log(calendarItem.id)
+      let googleCalendarApi = this._vm.$gapi.clientProvider.client
+      googleCalendarApi.gapi.client.calendar.events.update({
+        "calendarId": calendarItem.calendarId,
+        "eventId": calendarItem.id,
+        "resource": {
+          "summary": calendarItem.itemTitle,
+          "start": function(){
+              if ( calendarItem.allDay){
+                return { 
+                  "date": calendarItem.startDate
+                }
+              }
+              else
+              {
+                return {
+                  "dateTime": new Date(calendarItem.startDate +" "+ calendarItem.startTime).toISOString()
+                }
+              } 
+            }(),
+          "end": function(){
+              if ( calendarItem.allDay){
+                return { 
+                  "date": calendarItem.endDate
+                }
+              }
+              else
+              {
+                return {
+                  "dateTime": new Date(calendarItem.endDate +" "+ calendarItem.endTime).toISOString()
+                }
+              } 
+            }(),
+          "colorId": function(){
+            if(calendarItem.itemColor){
+              return calendarItem.itemColor
+            }
+            else{
+              return calendarItem.colorId
+            }
+          }(),
+        }
+      })
+      .then(function(response) {
+        console.log("Response", response);
+        commit('saveEvent',[index,calendarItem])
+      },
+      function(err) { console.error("Execute error", err); });
+
+      // console.log(calendarItem)
       
     },
 
