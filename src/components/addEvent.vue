@@ -67,7 +67,9 @@
                     depressed                    
                     v-on="on"
                     v-show="!calendarItem.allDay"
-                    @click="timeInput=true">
+                    @click="editInputStart()"
+                    >
+                    <!-- @click="timeInput=true" -->
                     開始時間
                     {{ calendarItem.startTime}}
                     </v-btn>
@@ -76,19 +78,19 @@
                     format="ampm"
                     landscape
                     v-model="calendarItem.startTime"
-                    v-if="timeInput"
+                    v-show="startTimeInput"
                 >
                     <v-btn
                     text
                     color="primary"
-                    @click="cancelInputTime()"
+                    @click="cancelInputStart()"
                     >
                     Cancel
                     </v-btn>
                     <v-btn
                     text
                     color="primary"
-                    @click="saveInputTime()"
+                    @click="saveInputStart()"
                     >
                     OK
                     </v-btn>
@@ -120,7 +122,9 @@
                     depressed
                     v-show="!calendarItem.allDay"
                     v-on="on"
-                    @click="timeInput=true">
+                    @click="editInputEnd()"
+                    >
+                    <!-- @click="timeInput=true" -->
                     結束時間
                     {{ calendarItem.endTime}}
                     </v-btn>
@@ -129,19 +133,19 @@
                     format="ampm"
                     landscape
                     v-model="calendarItem.endTime"
-                    v-if="timeInput"
+                    v-show="endTimeInput"
                 >
                     <v-btn
                     text
                     color="primary"
-                    @click="cancelInputTime()"
+                    @click="cancelInputEnd()"
                     >
                     Cancel
                     </v-btn>
                     <v-btn
                     text
                     color="primary"
-                    @click="saveInputTime()"
+                    @click="saveInputEnd()"
                     >
                     OK
                     </v-btn>
@@ -227,7 +231,9 @@
     name: 'addEvent',
 
 data: () => ({
-    timeInput: false,
+    startTimeInput: false,
+    endTimeInput: false,
+    currentInput: "",
       // add item
     addItemOpen: false,
     calendarItem: {
@@ -252,14 +258,27 @@ methods: {
     console.log(this.calendarItem);
      this.$store.dispatch("addEvent",this.calendarItem)
     },
-    cancelInputTime(){
-        this.calendarItem.startTime = '';
-        this.calendarItem.endTime = '';
-        this.timeInput = false;
-
+    editInputStart(){
+        this.startTimeInput = true;
+        this.currentInput = this.calendarItem.startTime
     },
-    saveInputTime(){
-        this.timeInput = false;
+    editInputEnd(){
+        this.endTimeInput = true;
+        this.currentInput = this.calendarItem.endTime
+    },
+    cancelInputStart(){
+        this.calendarItem.startTime = this.currentInput;
+        this.startTimeInput = false;
+    },
+    cancelInputEnd(){
+        this.calendarItem.endTime = this.currentInput;
+        this.endTimeInput = false;
+    },
+    saveInputStart(){
+        this.startTimeInput = false;
+    },
+    saveInputEnd(){
+        this.endTimeInput = false;
     },
     cancelAdd(){
         this.calendarItem.itemTitle = '';

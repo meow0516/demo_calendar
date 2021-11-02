@@ -88,6 +88,8 @@
                   depressed                    
                   v-show="!(calendarEvent.allDay)"
                   v-on="on"
+                  @click="editInputStart()"
+                  >
                   開始時間
                   {{ calendarEvent.startTime }}
                   </v-btn>
@@ -96,18 +98,19 @@
                   format="ampm"
                   landscape
                   v-model="calendarEvent.startTime"
-                  v-if="timeInput">
+                  v-show="startTimeInput"
+                  >
                   <v-btn
                   text
                   color="primary"
-                  @click="cancelInputTime()"
+                  @click="cancelInputStart()"
                   >
                   Cancel
                   </v-btn>
                   <v-btn
                   text
                   color="primary"
-                  @click="saveInputTime()"
+                  @click="saveInputStart()"
                   >
                   OK
                   </v-btn>
@@ -139,6 +142,7 @@
                     depressed
                     v-on="on"
                     v-show="!(calendarEvent.allDay)"
+                    @click="editInputEnd()"
                     >
                     結束時間
                     {{ calendarEvent.endTime}}
@@ -148,19 +152,19 @@
                     format="ampm"
                     landscape
                     v-model="calendarEvent.endTime"
-                    v-if="timeInput"
+                    v-show="endTimeInput"
                 >
                     <v-btn
                     text
                     color="primary"
-                    @click="cancelInputTime()"
+                    @click="cancelInputEnd()"
                     >
                     Cancel
                     </v-btn>
                     <v-btn
                     text
                     color="primary"
-                    @click="saveInputTime()"
+                    @click="saveInputEnd()"
                     >
                     OK
                     </v-btn>
@@ -267,16 +271,16 @@
         startTime: '',
         endDate: '',
         endTime: '',
-        // allDay: false,
-        itemColor: ['blue', 'indigo', 'deep-purple'],
+        allDay: null,
         itemColor: '',
         colorId: '',
       },
-      // events: [],
-      colors: ['blue', 'indigo', 'deep-purple', 'cyan', 'green', 'orange', 'grey darken-1'],
+      
       index: '',
       editIndex: '',
-      timeInput: false,
+      startTimeInput: false,
+      endTimeInput: false,
+      currentInput: "",
     }),
 
     mounted () {
@@ -354,18 +358,27 @@
         console.log("cancel update")
       },
 
-      saveInputTime(){
-        console.log(this.timeInput);
-        this.timeInput = false;
+      editInputStart(){
+        this.startTimeInput = true;
+        this.currentInput = this.calendarEvent.startTime
       },
-
-      cancelInputTime(){
-
-        // let currentTime = this.calendarEvent.startTime
-        // this.calendarEvent.startTime = moment(this.selectedEvent.start).format('hh:mm');
-        // this.calendarEvent.endTime = moment(this.selectedEvent.end).format('hh:mm');
-        console.log(this.timeInput)
-        this.timeInput = false;
+      editInputEnd(){
+          this.endTimeInput = true;
+          this.currentInput = this.calendarEvent.endTime
+      },
+      cancelInputStart(){
+          this.calendarEvent.startTime = this.currentInput;
+          this.startTimeInput = false;
+      },
+      cancelInputEnd(){
+          this.calendarEvent.endTime = this.currentInput;
+          this.endTimeInput = false;
+      },
+      saveInputStart(){
+          this.startTimeInput = false;
+      },
+      saveInputEnd(){
+          this.endTimeInput = false;
       },
 
       
