@@ -53,9 +53,11 @@
         <!-- card at edit mode -->
         <v-card-text  v-if="index === editIndex">
           <v-checkbox
-            v-model="selectedEvent.allDay"
+            v-model="calendarEvent.allDay"
+            @change="logCalendarEvent"
             label="全天"
           ></v-checkbox> 
+          <!-- {{ allDay }} -->
           <!-- start date-->
             <v-menu
               offset-y>
@@ -84,9 +86,8 @@
               <template v-slot:activator="{on}">
                   <v-btn 
                   depressed                    
-                  v-show="!(selectedEvent.allDay)"
+                  v-show="!(calendarEvent.allDay)"
                   v-on="on"
-                  @click="timeInput=true">
                   開始時間
                   {{ calendarEvent.startTime }}
                   </v-btn>
@@ -137,8 +138,8 @@
                     <v-btn 
                     depressed
                     v-on="on"
-                    v-show="!(selectedEvent.allDay)"
-                    @click="timeInput=true">
+                    v-show="!(calendarEvent.allDay)"
+                    >
                     結束時間
                     {{ calendarEvent.endTime}}
                     </v-btn>
@@ -284,6 +285,9 @@
     },
 
     methods: {
+      logCalendarEvent(){
+        this.calendarEvent = Object.assign({},this.calendarEvent);
+      },
       viewDay ({ date }) {
         this.$store.commit("viewDate", date)
         this.$store.state.type = 'day'
