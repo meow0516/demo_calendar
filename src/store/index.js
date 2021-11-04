@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import moment from 'moment';
+// import { resolve } from 'core-js/fn/promise';
 
 
 Vue.use(Vuex)
@@ -28,7 +29,7 @@ export default new Vuex.Store({
       calendarListItems.forEach(calendarListItem => {
         state.calendarLists.push(calendarListItem)
       });
-      console.log(state.calendarLists)
+      
     },
 
     setColor(state, [calendarColors, eventColors]){
@@ -166,22 +167,36 @@ export default new Vuex.Store({
   },
   actions: {    
     loadCalendarList(){
-      let that = this;
-      let googleCalendarApi = this._vm.$gapi.clientProvider.client
-      // console.log(googleApi.gapi)
-      googleCalendarApi.gapi.client.calendar.calendarList.list({
-        'calendarId': 'primary',
-      }).then(function(response) {
-          let calendarListItems = response.result.items
-          that.commit('setCalendarList',calendarListItems)
-          console.log(response)
-      });
+      return new Promise((resolve)=>{
+        let that = this;
+        let googleCalendarApi = this._vm.$gapi.clientProvider.client
+  
+        let promiseCalendarList = new Promise ((resolve)=>{        
+            googleCalendarApi.gapi.client.calendar.calendarList.list({
+              'calendarId': 'primary',
+            })
+            .then(function(response) {
+                let calendarListItems = response.result.items
+                that.commit('setCalendarList',calendarListItems)
+                resolve ()
+            });
+        }
+        );
+  
+        let promiseEvent = new Promise((resolve)=>{
+          googleCalendarApi.gapi.client.calendar.colors.get({
+          }).then(function(response){
+            let calendarColor = response.result.calendar
+            let eventColor = response.result.event
+            that.commit('setColor', [calendarColor, eventColor])
+            resolve ()
+          });
+        });
+  
+        Promise.all([promiseCalendarList,promiseEvent]).then(()=> {
+          resolve()
+        })
 
-      googleCalendarApi.gapi.client.calendar.colors.get({
-      }).then(function(response){
-        let calendarColor = response.result.calendar
-        let eventColor = response.result.event
-        that.commit('setColor', [calendarColor, eventColor])        
       })
     },
 

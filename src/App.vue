@@ -79,22 +79,22 @@ export default {
   }),
 
   created() {
+  mounted(){    
+    let that = this
   //   // (2) Subscribe to authentication status changes
       this.$gapi.listenUserSignIn((isSignedIn) => {
       this.isSignedIn = isSignedIn
-    })
+      })
+      .then(function(){
+          that.loadCalendarList()
+      })
+  
   },
 
   methods: {
     login() {
-        this.$gapi.login().then(
-          ({ currentUser, gapi, hasGrantedScopes }) => {
-          console.log({ currentUser, gapi, hasGrantedScopes })
-          // call a mutation
-          this.$store.state.token = currentUser['$b']['access_token']
-          // console.log(this.$store.state.token);
-        })
-      },
+      this.$gapi.login()
+    },
 
     logout() {
       this.$gapi.logout()
@@ -106,13 +106,10 @@ export default {
     },
     
     loadCalendarList(){
-      this.$store.dispatch("loadCalendarList");
-    },
-    showEvents(){
-      console.log(this.$store.state.events)
-    },
-    getColor(){
-      this.$store.dispatch("getColor")
+      this.$store.dispatch("loadCalendarList")
+      .then(()=>{
+        return this.loadEvent()
+      })
     },
 
   },
