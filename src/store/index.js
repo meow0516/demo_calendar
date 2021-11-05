@@ -263,12 +263,16 @@ export default new Vuex.Store({
             }(),
           "colorId": 
           function(){
-            if( !calendarItem.itemColorId ){
-              return that.state.calendarLists[calendarItem.calendarIndex]['colorId']
-            }
-            else{
+            if (calendarItem.itemColorId){
               return calendarItem.itemColorId
             }
+            // if( !calendarItem.itemColorId ){
+            //   // return that.state.calendarLists[calendarItem.calendarIndex]['colorId']
+            //   return ''
+            // }
+            // else{
+            //   return calendarItem.itemColorId
+            // }
           }(),
         }
       })
