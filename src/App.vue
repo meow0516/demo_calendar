@@ -45,12 +45,6 @@
 
     <v-main>     
       <div>
-        <button @click="loadCalendarList()">load calendar list</button>
-        <button @click="loadEvent()">load event</button>
-        <button @click="showEvents()">show events</button>
-        <button @click="getColor()">get color</button>
-      </div>
-      <div>
         <pre id="content" style="white-space: pre-wrap;"></pre>
       </div>
       <calendar/>
@@ -74,30 +68,45 @@ export default {
 
   data: () => ({
     isSignedIn: null,
+    userName: '',
     // token: null,
 
   }),
 
   created() {
+
+  },
+
   mounted(){    
     let that = this
   //   // (2) Subscribe to authentication status changes
-      this.$gapi.listenUserSignIn((isSignedIn) => {
-      this.isSignedIn = isSignedIn
-      })
-      .then(function(){
-          that.loadCalendarList()
-      })
+  // is signed in
+    this.$gapi.listenUserSignIn((isSignedIn) => {
+     this.isSignedIn = isSignedIn
+    })
+    .then(function(){
+      that.loadCalendarList()
+      that.displayUserName()
+    })
+  
+  // hasn't signed in
+
   
   },
 
   methods: {
     login() {
+      let that = this
       this.$gapi.login()
+      .then(function(){
+      that.loadCalendarList()
+      that.displayUserName()
+    })
     },
 
     logout() {
       this.$gapi.logout()
+      this.userName = ''
       this.$store.commit("clearEvents")
     },
 
@@ -112,20 +121,18 @@ export default {
       })
     },
 
+    displayUserName(){
+      let user = this.$gapi.getUserData()
+
+      if (user) {
+        this.userName = user.email
+      }
+    },
+
+
   },
 
   computed: {
-    userName() {
-    //   // (4) Display authenticated user name
-     let user = this.$gapi.getUserData()
-
-      if (user) {
-        return user.email
-      }
-      else{
-        return '';
-      }
-    },
   },
 };
 </script>
