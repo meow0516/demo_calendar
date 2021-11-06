@@ -229,14 +229,13 @@ export default new Vuex.Store({
     addEvent({commit},calendarItem){
       let that = this;      
       let googleCalendarApi = this._vm.$gapi.clientProvider.client
-      // let calendarItem = getters.calendarItem
 
       googleCalendarApi.gapi.client.calendar.events.insert({
         "calendarId": that.state.calendarLists[calendarItem.calendarIndex]['id'],
         "resource": {
           "summary": calendarItem.itemTitle,
           "start": function(){
-              if ( calendarItem.allDay){
+              if ( calendarItem.allDay){                
                 return { 
                   "date": calendarItem.startDate
                 }
@@ -251,7 +250,7 @@ export default new Vuex.Store({
           "end": function(){
               if ( calendarItem.allDay){
                 return { 
-                  "date": calendarItem.endDate
+                  "date": moment(calendarItem.endDate).add(1,'days').format('YYYY-MM-DD')                  
                 }
               }
               else
@@ -289,9 +288,6 @@ export default new Vuex.Store({
     },
 
     saveEvent({commit},[index,calendarItem]){
-      console.log("calendar ID")
-      console.log(calendarItem.calendarId)
-      console.log(calendarItem.id)
       let googleCalendarApi = this._vm.$gapi.clientProvider.client
       googleCalendarApi.gapi.client.calendar.events.update({
         "calendarId": calendarItem.calendarId,
@@ -314,7 +310,7 @@ export default new Vuex.Store({
           "end": function(){
               if ( calendarItem.allDay){
                 return { 
-                  "date": calendarItem.endDate
+                  "date": moment(calendarItem.endDate).add(1,'days').format('YYYY-MM-DD')
                 }
               }
               else
@@ -355,7 +351,6 @@ export default new Vuex.Store({
       },
       function(err) { console.error("Execute error", err); });
 
-      // console.log(calendarItem)
       return commit
     },
   },
