@@ -12,6 +12,7 @@
                 normal
                 tabindex="-1"
                 color="blue"
+                @click="clearInput"
                 v-on="on"
                 >
                 <v-icon dark>
@@ -244,20 +245,19 @@ data: () => ({
         endDate: '',
         endTime: '',
         calendarIndex: '',
-        // calendarId: '',
         itemColorId: '',
         allDay: false,  
     },
 
 
     }),
-mounted () {
-      
+mounted () {    
 },
 methods: {
     addItem(){
         this.$store.dispatch("addEvent",this.calendarItem)
-        this.addItemOpen = false;
+        
+        this.addItemOpen = false;        
     },
     editInputStart(){
         this.startTimeInput = true;
@@ -282,16 +282,19 @@ methods: {
         this.endTimeInput = false;
     },
     cancelAdd(){
+        this.clearInput()
+        this.addItemOpen = false;
+    },
+    clearInput(){
         this.calendarItem.itemTitle = '';
         this.calendarItem.startDate = '';
         this.calendarItem.startTime = '';
         this.calendarItem.endDate = '';
         this.calendarItem.endTime = '';
-        this.calendarId= '';
+        this.calendarItem.calendarIndex = '',
         this.calendarItem.itemColorId = '';
-        this.allDay= false;
-        this.addItemOpen = false;
-    },
+        this.calendarItem.allDay= false;
+    }
 
 },
 
