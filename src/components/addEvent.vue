@@ -168,7 +168,8 @@
                 v-model="calendarItem.itemColorId"
                 row
                 >活動顏色
-                <v-radio v-for="(eventColor,index) in eventColors"
+                <v-radio 
+                    v-for="(eventColor,index) in eventColors"
                     :key="eventColor.index"
                     :label="index"
                     :color="eventColor.background"
@@ -255,8 +256,8 @@ mounted () {
 },
 methods: {
     addItem(){
-    console.log(this.calendarItem);
-     this.$store.dispatch("addEvent",this.calendarItem)
+        this.$store.dispatch("addEvent",this.calendarItem)
+        this.addItemOpen = false;
     },
     editInputStart(){
         this.startTimeInput = true;
