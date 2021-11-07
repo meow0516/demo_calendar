@@ -329,8 +329,8 @@ export default new Vuex.Store({
               } 
             }(),
           "colorId": function(){
-            if(calendarItem.itemColor){
-              return calendarItem.itemColor
+            if(calendarItem.colorId){
+              return calendarItem.colorId
             }
             else{
               return calendarItem.colorId
