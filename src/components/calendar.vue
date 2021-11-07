@@ -40,8 +40,8 @@
                 mdi-chevron-right
               </v-icon>
             </v-btn>
-            <v-toolbar-title v-if="$refs.calendar">
-              {{ $refs.calendar.title }}
+            <v-toolbar-title>
+              {{year}} 年 {{ month }} 月
             </v-toolbar-title>
             <v-spacer></v-spacer>
             <!-- menu: add item-->
@@ -69,35 +69,13 @@
     name: 'calendar',
 
     data: () => ({
-      // selectedEvent: {
-      //   start: null,
-      //   end: null
-      // },
-      // selectedElement: null,
-      // selectedOpen: false,
-
-
-      // // edit event
-      // calendarEvent: {
-      //   itemTitle: '',
-      //   startDate: '',
-      //   startTime: '',
-      //   endDate: '',
-      //   endTime: '',
-      //   itemColor: ['blue', 'indigo', 'deep-purple'],
-      // },
-      // // events: [],
-      // colors: ['blue', 'indigo', 'deep-purple', 'cyan', 'green', 'orange', 'grey darken-1'],
-      // names: ['Meeting', 'Holiday', 'PTO', 'Travel', 'Event', 'Birthday', 'Conference', 'Party'],
-      // index: '',
-      // editIndex: '',
-      // timeInput: false,
+      
     }),
+    mounted(){
+
+    },
 
     methods: {
-      getEventColor (event) {
-        return event.color
-      },
       setToday () {
         this.$store.commit("setToday")
       },
@@ -106,19 +84,16 @@
       },
       next () {
         this.$children[1].$refs.calendar.next()
-      },
+      },     
 
-      popFunctionList(){
-        console.log('popFunnctionList');
-      },
-      rnd (a, b) {
-        return Math.floor((b - a + 1) * Math.random()) + a
-      },
     },
     computed: {
-      events(){
-        return this.$store.state.events
+      year(){
+        return this.$store.state.currentYear
       },
+      month(){
+        return this.$store.state.currentMonth
+      }
     },
   
   }

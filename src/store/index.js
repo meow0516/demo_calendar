@@ -21,13 +21,15 @@ export default new Vuex.Store({
       day: 'Day',
       '4day': '4 Days',       
     },
-
+    currentYear: '',
+    currentMonth: '',
   },
 
   mutations: {
     setCalendarList(state, calendarListItems){
       calendarListItems.forEach(calendarListItem => {
         state.calendarLists.push(calendarListItem)
+        // console.log(state.calendarLists)
       });
       
     },
@@ -35,7 +37,7 @@ export default new Vuex.Store({
     setColor(state, [calendarColors, eventColors]){
       state.calendarColors = Object.assign({},calendarColors)
       state.eventColors = Object.assign({},eventColors)
-      // console.log(state.eventColors)
+      // console.log(state.eventColors)      
       // console.log(state.calendarColors)
     },
  
@@ -164,6 +166,12 @@ export default new Vuex.Store({
       state.calendarColors = {};
       state.eventColors = {};
     },
+    displayMonth(state,[year, month]){
+      state.currentYear = year;
+      state.currentMonth = month;
+      // console.log(state.year)
+      // console.log(state.month)
+    }
   },
   actions: {    
     loadCalendarList(){
@@ -332,6 +340,7 @@ export default new Vuex.Store({
       })
       .then(function(response) {
         console.log("Response", response);
+        console.log(calendarItem)
         commit('saveEvent',[index,calendarItem])
       },
       function(err) { console.error("Execute error", err); });

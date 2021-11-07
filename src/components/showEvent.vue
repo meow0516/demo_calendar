@@ -10,6 +10,7 @@
       @click:event="showEvent"
       @click:more="viewDay"
       @click:date="viewDay"
+      @change="logMonth"
     ></v-calendar>
 <!-- open selected event -->
     <v-menu
@@ -388,13 +389,10 @@
         this.selectedOpen = false;        
       },
 
-      popFunctionList(){
-        console.log('popFunnctionList');
+      logMonth({start}){
+        this.$store.commit("displayMonth",[start.year, start.month])
       },
 
-      rnd (a, b) {
-        return Math.floor((b - a + 1) * Math.random()) + a
-      },
     },
     computed: {
       type(){
