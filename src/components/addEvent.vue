@@ -24,6 +24,7 @@
             <v-card
             color="grey lighten-4"
             min-width="350px"
+            max-width="600px"
             flat
             >
             <v-card-title>
@@ -39,173 +40,157 @@
                 <v-checkbox
                     v-model="calendarItem.allDay"
                     label="全天"
-                ></v-checkbox>  
-                <!-- start date -->
-                <v-menu
-                offset-y>
-                <template v-slot:activator="{on}">
-                    <v-btn 
-                    depressed
-                    v-on="on">
-                    開始日期
-                    {{ calendarItem.startDate}}
-                    </v-btn>
-                </template>
-                    <v-row justify="center">
-                    <v-date-picker 
-                    show-week
-                    show-adjacent-months
-                    picker-date
-                    v-model="calendarItem.startDate"></v-date-picker>
-                    </v-row>
-                </v-menu>
-                <!-- start time -->      
-                <v-menu                
-                :close-on-content-click="false"
-                offset-y>
-                <template v-slot:activator="{on}">
-                    <v-btn 
-                    depressed                    
-                    v-on="on"
-                    v-show="!calendarItem.allDay"
-                    @click="editInputStart()"
-                    >
-                    <!-- @click="timeInput=true" -->
-                    開始時間
-                    {{ calendarItem.startTime}}
-                    </v-btn>
-                </template>
-                <v-time-picker
-                    format="ampm"
-                    landscape
-                    v-model="calendarItem.startTime"
-                    v-show="startTimeInput"
-                >
-                    <v-btn
-                    text
-                    color="primary"
-                    @click="cancelInputStart()"
-                    >
-                    Cancel
-                    </v-btn>
-                    <v-btn
-                    text
-                    color="primary"
-                    @click="saveInputStart()"
-                    >
-                    OK
-                    </v-btn>
-                </v-time-picker>
-                </v-menu>
-                <!-- end date -->
-                <v-menu
-                offset-y>
-                <template v-slot:activator="{on}">
-                    <v-btn 
-                    depressed
-                    v-on="on">
-                    結束日期
-                    {{ calendarItem.endDate}}
-                    </v-btn>
-                </template>
-                    <v-row justify="center">
-                    <v-date-picker 
-                    picker-date
-                    v-model="calendarItem.endDate"></v-date-picker>
-                    </v-row>
-                </v-menu>
-                <!-- end time -->
-                <v-menu
-                :close-on-content-click="false"
-                offset-y>
-                <template v-slot:activator="{on}">
-                    <v-btn 
-                    depressed
-                    v-show="!calendarItem.allDay"
-                    v-on="on"
-                    @click="editInputEnd()"
-                    >
-                    <!-- @click="timeInput=true" -->
-                    結束時間
-                    {{ calendarItem.endTime}}
-                    </v-btn>
-                </template>
-                <v-time-picker
-                    format="ampm"
-                    landscape
-                    v-model="calendarItem.endTime"
-                    v-show="endTimeInput"
-                >
-                    <v-btn
-                    text
-                    color="primary"
-                    @click="cancelInputEnd()"
-                    >
-                    Cancel
-                    </v-btn>
-                    <v-btn
-                    text
-                    color="primary"
-                    @click="saveInputEnd()"
-                    >
-                    OK
-                    </v-btn>
-                </v-time-picker>
-                </v-menu>
+                ></v-checkbox>
+                <div class="inputtime-container">
+                    <div class="daytime-input">
+                        <!-- start date -->
+                        <v-menu
+                        offset-y>
+                        <template v-slot:activator="{on}">
+                            <v-btn 
+                            depressed
+                            v-on="on"
+                            >
+                            開始日期
+                            {{ calendarItem.startDate}}
+                            </v-btn>
+                        </template>
+                            <v-row justify="center">
+                            <v-date-picker 
+                            show-week
+                            show-adjacent-months
+                            picker-date
+                            v-model="calendarItem.startDate"></v-date-picker>
+                            </v-row>
+                        </v-menu>
+                        <!-- start time -->      
+                        <v-menu                
+                        :close-on-content-click="false"
+                        offset-y
+                        >
+                        <template v-slot:activator="{on}">
+                            <v-btn 
+                            depressed                    
+                            v-on="on"
+                            v-show="!calendarItem.allDay"
+                            @click="editInputStart()"                                      
+                            >
+                            開始時間
+                            {{ calendarItem.startTime}}
+                            </v-btn>
+                        </template>
+                        <v-time-picker
+                            format="ampm"
+                            landscape
+                            v-model="calendarItem.startTime"
+                            v-show="startTimeInput"
+                        >
+                            <v-btn
+                            text
+                            color="primary"
+                            @click="cancelInputStart()"
+                            >
+                            Cancel
+                            </v-btn>
+                            <v-btn
+                            text
+                            color="primary"
+                            @click="saveInputStart()"
+                            >
+                            OK
+                            </v-btn>
+                        </v-time-picker>
+                        </v-menu>
+
+                    </div>
+                    <div class="daytime-input">
+                        <!-- end date -->
+                        <v-menu
+                        offset-y>
+                        <template v-slot:activator="{on}">
+                            <v-btn 
+                            depressed
+                            v-on="on"
+                            >
+                            結束日期
+                            {{ calendarItem.endDate}}
+                            </v-btn>
+                        </template>
+                            <v-row justify="center">
+                            <v-date-picker 
+                            picker-date
+                            v-model="calendarItem.endDate"></v-date-picker>
+                            </v-row>
+                        </v-menu>
+                        <!-- end time -->
+                        <v-menu
+                        :close-on-content-click="false"
+                        offset-y>
+                        <template v-slot:activator="{on}">
+                            <v-btn 
+                            depressed
+                            v-show="!calendarItem.allDay"
+                            v-on="on"
+                            @click="editInputEnd()"                    
+                            >
+                            <!-- @click="timeInput=true" -->
+                            結束時間
+                            {{ calendarItem.endTime}}
+                            </v-btn>
+                        </template>
+                        <v-time-picker
+                            format="ampm"
+                            landscape
+                            v-model="calendarItem.endTime"
+                            v-show="endTimeInput"
+                        >
+                            <v-btn
+                            text
+                            color="primary"
+                            @click="cancelInputEnd()"
+                            >
+                            Cancel
+                            </v-btn>
+                            <v-btn
+                            text
+                            color="primary"
+                            @click="saveInputEnd()"
+                            >
+                            OK
+                            </v-btn>
+                        </v-time-picker>
+                        </v-menu>
+                    </div>                
+                </div>  
                 <!-- calendar ID -->
+                <div class="input-subtitle">
+                    日曆名稱
+                </div>
                 <v-radio-group              
                 v-model="calendarItem.calendarIndex"
-                >日曆名稱
-                <v-radio v-for="(calendarList) in calendarLists"
-                    :key="calendarList.index"
-                    :label="calendarList.summary"
-                    :value="calendarList.index"
-                    :color="calendarList.backgroundColor">
-                </v-radio>
-                <!-- :value="calendarList.id" -->
+                >
+                    <v-radio v-for="(calendarList) in calendarLists"
+                        :key="calendarList.index"
+                        :label="calendarList.summary"
+                        :value="calendarList.index"
+                        :color="calendarList.backgroundColor">
+                    </v-radio>
                 </v-radio-group>
                 <!-- calendar color -->
+                <div class="input-subtitle">
+                    活動顏色
+                </div>
                 <v-radio-group              
                 v-model="calendarItem.itemColorId"
                 row
-                >活動顏色
-                <v-radio 
-                    v-for="(eventColor,index) in eventColors"
-                    :key="eventColor.index"
-                    :label="index"
-                    :color="eventColor.background"
-                    :value="index">
-                </v-radio>
-                <!-- <v-radio
-                    label="紅色"
-                    color="red"
-                    value="red"
-                ></v-radio>
-                <v-radio
-                    label="粉紅色"
-                    color="pink"
-                    value="pink"
-                ></v-radio>
-                <v-radio
-                    label="紫色"
-                    color="purple"
-                    value="purple"
-                ></v-radio>
-                <v-radio
-                    label="靛藍色"
-                    color="indigo"
-                    value="indigo"
-                ></v-radio>
-                <v-radio
-                    label="青色"
-                    color="cyan"
-                    value="cyan"
-                ></v-radio>
-                <v-radio
-                    label="綠色"
-                    color="green"
-                    value="green"
-                ></v-radio> -->
+                >
+                    <v-radio 
+                        v-for="(eventColor,index) in eventColors"
+                        :key="eventColor.index"
+                        :label="index"
+                        :color="eventColor.background"
+                        :value="index">
+                    </v-radio>
                 </v-radio-group>
             </v-card-text>
             <v-card-actions>
@@ -310,3 +295,16 @@ computed: {
   
 }
 </script>
+<style lang="scss" scoped>
+    .inputtime-container{
+        padding-bottom: 20px;
+    }
+    .daytime-input{
+        width: 80%;
+    }
+    .input-subtitle{
+        font-size: 18px;
+        display: block;
+
+    }
+</style>

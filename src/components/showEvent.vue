@@ -173,6 +173,7 @@
                 </v-menu>
             <v-radio-group              
               v-model="calendarEvent.colorId"
+              row
             >活動顏色
               <v-radio 
                 v-for="(eventColor,index) in eventColors"
