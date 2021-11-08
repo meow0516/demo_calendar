@@ -37,8 +37,6 @@ export default new Vuex.Store({
     setColor(state, [calendarColors, eventColors]){
       state.calendarColors = Object.assign({},calendarColors)
       state.eventColors = Object.assign({},eventColors)
-      // console.log(state.eventColors)      
-      // console.log(state.calendarColors)
     },
  
     setEvents(state, [calendarEvents, calendarId, calendarColorId]){
@@ -172,8 +170,6 @@ export default new Vuex.Store({
     displayMonth(state,[year, month]){
       state.currentYear = year;
       state.currentMonth = month;
-      // console.log(state.year)
-      // console.log(state.month)
     }
   },
   actions: {    
@@ -289,7 +285,7 @@ export default new Vuex.Store({
       
       .then(function(response) {
         // Handle the results here (response.result has the parsed body).
-        console.log("Response", response)
+        // console.log("Response", response)
         let calendarId = that.state.calendarLists[calendarItem.calendarIndex]['id']
         let id = response.result.id
         commit('addEvent',[calendarItem, calendarId, id])
@@ -341,9 +337,7 @@ export default new Vuex.Store({
           }(),
         }
       })
-      .then(function(response) {
-        console.log("Response", response);
-        console.log(calendarItem)
+      .then(function() {
         commit('saveEvent',[index,calendarItem])
       },
       function(err) { console.error("Execute error", err); });
@@ -366,35 +360,7 @@ export default new Vuex.Store({
     },
   },
   getters: {
-    // calendarItem(){
-    //   calendarId = calendarItem.calendarId;
-    //   summary = calendarItem.itemTitle;
-    //   start = function(){
-    //     if ( calendarItem.allDay){
-    //       return { 
-    //         "date": calendarItem.startDate
-    //       }
-    //     }
-    //     else
-    //     {
-    //       return {
-    //         "dateTime": (calendarItem.startDate + 'T' + calendarItem.startTime).toISOString()
-    //       }
-    //     }
-    //   };
-    //   end = function(){
-    //     if ( calendarItem.allDay){
-    //       return {
-    //         "date": calendarItem.endDate
-    //       }
-    //     }
-    //     else
-    //     {
-    //       return b
-    //     }
-    //   };;
-    //   colorId = calendarItem.itemColorId;
-    // }
+
   },
   modules: {
   }

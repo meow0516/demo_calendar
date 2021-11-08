@@ -317,7 +317,7 @@
         } else {
           open()          
         }
-        console.log(event)
+        // console.log(event)
         nativeEvent.stopPropagation()
       },
 
@@ -331,32 +331,23 @@
         this.calendarEvent.endDate =  moment(this.selectedEvent.end).format('YYYY-MM-DD');
         this.calendarEvent.endTime = moment(this.selectedEvent.end).format('HH:mm');
         this.calendarEvent.colorId = this.selectedEvent.colorId;
-        // this.calendarEvent.itemColor = this.selectedEvent.color;
+        this.calendarEvent.itemColor = this.selectedEvent.color;
+        // console.log(this.calendarEvent)
 
       },
       saveUpdate(){
         this.$store.dispatch("saveEvent", [this.index,this.calendarEvent])
 
-        // this.selectedOpen = false; 
-        // this.calendarEvent.itemTitle = '';
-        // this.calendarEvent.startDate = '';
-        // this.calendarEvent.startTime = '';
-        // this.calendarEvent.endDate = '';
-        // this.calendarEvent.endTime = '';
-        // this.calendarEvent.itemColor = '';
-        // this.editIndex = '';        
-        // console.log("save update")
+        this.selectedOpen = false; 
+        this.editIndex = '';      
+        
+        this.clearInput()
       },
       cancelUpdate(){
         this.selectedOpen = false; 
-        this.calendarEvent.itemTitle = '';
-        this.calendarEvent.startDate = '';
-        this.calendarEvent.startTime = '';
-        this.calendarEvent.endDate = '';
-        this.calendarEvent.endTime = '';
-        this.calendarEvent.itemColor = '';
         this.editIndex = '';
-        console.log("cancel update")
+
+        this.clearInput();
       },
 
       editInputStart(){
@@ -364,33 +355,45 @@
         this.currentInput = this.calendarEvent.startTime
       },
       editInputEnd(){
-          this.endTimeInput = true;
-          this.currentInput = this.calendarEvent.endTime
+        this.endTimeInput = true;
+        this.currentInput = this.calendarEvent.endTime
       },
       cancelInputStart(){
-          this.calendarEvent.startTime = this.currentInput;
-          this.startTimeInput = false;
+        this.calendarEvent.startTime = this.currentInput;
+        this.startTimeInput = false;
       },
       cancelInputEnd(){
-          this.calendarEvent.endTime = this.currentInput;
-          this.endTimeInput = false;
+        this.calendarEvent.endTime = this.currentInput;
+        this.endTimeInput = false;
       },
       saveInputStart(){
-          this.startTimeInput = false;
+        this.startTimeInput = false;
       },
       saveInputEnd(){
-          this.endTimeInput = false;
+        this.endTimeInput = false;
       },
 
       
       deleteItem(){        
         this.$store.dispatch("deleteEvent",[this.selectedEvent,this.index])
-        // this.events.splice(this.index,1);
         this.selectedOpen = false;        
       },
 
       logMonth({start}){
         this.$store.commit("displayMonth",[start.year, start.month])
+      },
+       clearInput(){
+        this.calendarEvent = Object.assign({},{
+          itemTitle: '',
+          startDate: '',
+          startTime: '',
+          endDate: '',
+          endTime: '',
+          itemColor: '',
+          colorId: '',
+          allDay: null,
+        }
+        )
       },
 
     },
