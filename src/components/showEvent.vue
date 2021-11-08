@@ -15,6 +15,7 @@
 <!-- open selected event -->
     <v-menu
       v-model="selectedOpen"
+      :open-on-click="false"
       :close-on-content-click="false"
       :activator="selectedElement"
       offset-x
@@ -312,18 +313,16 @@
 
         if (this.selectedOpen) {
           this.selectedOpen = false
-          requestAnimationFrame(() => requestAnimationFrame(() => open()))
+          requestAnimationFrame(() => requestAnimationFrame(() => open()))          
         } else {
-          open()
+          open()          
         }
         console.log(event)
-        console.log(this.selectedEvent)
         nativeEvent.stopPropagation()
       },
 
       updateItem(){
         this.editIndex = this.index;
-        console.log(this.selectedEvent);
         this.calendarEvent = this.selectedEvent
         this.calendarEvent.allDay = this.selectedEvent.allDay;
         this.calendarEvent.itemTitle = this.selectedEvent.name;
@@ -385,8 +384,8 @@
 
       
       deleteItem(){        
-        this.$store.dispatch("deleteEvent",this.selectedEvent)
-        this.events.splice(this.index,1);
+        this.$store.dispatch("deleteEvent",[this.selectedEvent,this.index])
+        // this.events.splice(this.index,1);
         this.selectedOpen = false;        
       },
 

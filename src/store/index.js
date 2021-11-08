@@ -160,6 +160,9 @@ export default new Vuex.Store({
       state.events[index].color = calendarItem.colorId? state.eventColors[calendarItem.colorId].background: state.events[index].color;
       
     },
+    deleteEvent(state,index){
+      state.events.splice(index,1);
+    },
     clearEvents(state){
       state.events = [];
       state.calendarLists = [];
@@ -349,18 +352,17 @@ export default new Vuex.Store({
       
     },
 
-    deleteEvent({commit},calendarItem){
+    deleteEvent({commit},[calendarItem,index]){
       let googleCalendarApi = this._vm.$gapi.clientProvider.client
       googleCalendarApi.gapi.client.calendar.events.delete({
         "calendarId": calendarItem.calendarId,
         "eventId": calendarItem.id,
-      }).then(function(response) {
+      }).then(function() {
         // Handle the results here (response.result has the parsed body).
-        console.log("Response", response);
+        // console.log("Response", response);
+        commit('deleteEvent',index)
       },
       function(err) { console.error("Execute error", err); });
-
-      return commit
     },
   },
   getters: {
