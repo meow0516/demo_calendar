@@ -3,17 +3,8 @@ import App from './App.vue'
 import store from './store'
 import vuetify from './plugins/vuetify'
 import VueGapi from 'vue-gapi'
-// import GAuth from 'vue-google-oauth2'
 import moment from 'moment'
 
-
-// const gauthOption = {
-//   clientId: '642199378747-62svnibd4medlgj1ptd685ol8vf5l322.apps.googleusercontent.com',
-//   scope: 'profile email',
-//   prompt: 'select_account'
-// }
-
-// Vue.use(GAuth, gauthOption)
 Vue.prototype.moment = moment
 Vue.config.productionTip = false
 

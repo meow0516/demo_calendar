@@ -55,9 +55,7 @@
 
 <script>
 
-// import GoogleLogin from 'vue-google-login';
 import calendar from './components/calendar.vue';
-// import axios from 'axios';
 
 export default {
   name: 'App',
@@ -69,7 +67,6 @@ export default {
   data: () => ({
     isSignedIn: null,
     userName: '',
-    // token: null,
 
   }),
 

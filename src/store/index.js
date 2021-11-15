@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import moment from 'moment';
-// import { resolve } from 'core-js/fn/promise';
+
 
 
 Vue.use(Vuex)
