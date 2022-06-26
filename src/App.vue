@@ -1,174 +1,84 @@
 <template>
   <v-app>
-    <v-app-bar
-      app
-      color="primary"
-      dark
-    >
-      <div class="d-flex align-center">
-        Demo_Calendar
-      </div>
-
-      <v-spacer></v-spacer>
-
-      <div>
-        {{ userName }}          
-      </div>
-      <div>
-        <div v-if="isSignedIn">
-          <button 
-            class="google-btn d-flex"
-            @click="logout()" 
-            type="button"
-            >
-            <div class="google-icon-wrapper">
-              <img class="google-icon" src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg"/>
-            </div>
-            <div class="btn-text"><b>Logout</b></div>
-          </button>
-        </div>
-        <button
-          class="google-btn d-flex"
-          :disabled="isSignedIn === null"
-          @click="login()"
-          type="button"
-          v-if="!isSignedIn"
-        >
-          <div class="google-icon-wrapper">
-            <img class="google-icon" src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg"/>
-          </div>
-          <div class="btn-text"><b>Login</b></div>
-        </button>
-
-      </div>
-    </v-app-bar>
-
-    <v-main>     
+    <AppHeader />
+    <v-main>
       <div>
         <pre id="content" style="white-space: pre-wrap;"></pre>
       </div>
-      <calendar/>
+      <Calendar />
     </v-main>
   </v-app>
 </template>
 
-
 <script>
-
-import calendar from './components/calendar.vue';
+import Calendar from './components/CalendarContainer.vue';
+import AppHeader from './components/AppHeader.vue';
 
 export default {
   name: 'App',
 
   components: {
-    calendar,
+    Calendar,
+    AppHeader,
   },
 
   data: () => ({
     isSignedIn: null,
     userName: '',
-
   }),
 
-  created() {
+  created() {},
 
-  },
+  mounted() {
+    let that = this;
+    //   // (2) Subscribe to authentication status changes
+    // is signed in
+    this.$gapi
+      .listenUserSignIn(isSignedIn => {
+        this.isSignedIn = isSignedIn;
+      })
+      .then(function() {
+        that.loadCalendarList();
+        that.displayUserName();
+      });
 
-  mounted(){    
-    let that = this
-  //   // (2) Subscribe to authentication status changes
-  // is signed in
-    this.$gapi.listenUserSignIn((isSignedIn) => {
-     this.isSignedIn = isSignedIn
-    })
-    .then(function(){
-      that.loadCalendarList()
-      that.displayUserName()
-    })
-  
-  // hasn't signed in
-
-  
+    // hasn't signed in
   },
 
   methods: {
     login() {
-      let that = this
-      this.$gapi.login()
-      .then(function(){
-      that.loadCalendarList()
-      that.displayUserName()
-    })
+      let that = this;
+      this.$gapi.login().then(function() {
+        that.loadCalendarList();
+        that.displayUserName();
+      });
     },
 
     logout() {
-      this.$gapi.logout()
-      this.userName = ''
-      this.$store.commit("clearEvents")
+      this.$gapi.logout();
+      this.userName = '';
+      this.$store.commit('clearEvents');
     },
 
-    loadEvent(){
-      this.$store.dispatch("loadEvent");
-    },
-    
-    loadCalendarList(){
-      this.$store.dispatch("loadCalendarList")
-      .then(()=>{
-        return this.loadEvent()
-      })
+    loadEvent() {
+      this.$store.dispatch('loadEvent');
     },
 
-    displayUserName(){
-      let user = this.$gapi.getUserData()
+    loadCalendarList() {
+      this.$store.dispatch('loadCalendarList').then(() => {
+        return this.loadEvent();
+      });
+    },
+
+    displayUserName() {
+      let user = this.$gapi.getUserData();
 
       if (user) {
-        this.userName = user.email
+        this.userName = user.email;
       }
     },
-
-
   },
 
-  computed: {
-  },
+  computed: {},
 };
 </script>
-
-<style lang="scss" scoped>
-$white: #fff;
-$google-blue: #4285f4;
-$button-active-blue: #1669F2;
-
-.google-btn {
-  margin-left: 10px;
-  width: 150px;
-  height: 40px;
-  justify-content: space-around;
-  align-items: center;
-  border: 1px solid $google-blue;
-  border-radius: 2px;
-
-  .google-icon-wrapper {
-    border-radius: 2px;
-  }
-  .google-icon {
-    width: 18px;
-    height: 18px;
-    position: relative;
-    top: 2px;
-  }
-  .btn-text {
-    color: $white;
-    font-size: 20pxpx;
-    letter-spacing: 0.2px;
-    font-family: "Roboto";
-  }
-  &:hover {
-    box-shadow: 0 0 6px $google-blue;
-  }
-  &:active {
-    background: $button-active-blue;
-  }
-}
-
-</style>
