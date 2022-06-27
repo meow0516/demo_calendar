@@ -1,11 +1,9 @@
 <template>
-  <v-app-bar app color="primary" dark>
+  <v-app-bar app v-if="!isLoading">
     <h2 class="d-flex align-center">
       Demo Calendar
     </h2>
-
     <v-spacer></v-spacer>
-
     <div>
       {{ userName }}
     </div>
@@ -23,7 +21,6 @@
       </div>
       <button
         class="google-btn d-flex"
-        :disabled="isSignedIn === null"
         @click="login()"
         type="button"
         v-if="!isSignedIn"
@@ -45,55 +42,45 @@ export default {
   name: 'AppHeader',
 
   data: () => ({
-    isSignedIn: null,
+    isSignedIn: false,
+    isLoading: true,
     userName: '',
   }),
 
   created() {},
 
-  mounted() {
-    let that = this;
-    this.$gapi
-      .listenUserSignIn(isSignedIn => {
-        this.isSignedIn = isSignedIn;
-      })
-      .then(function() {
-        that.loadCalendarList();
-        that.displayUserName();
-      });
+  async mounted() {
+    await this.$gapi.listenUserSignIn(isSignedIn => {
+      this.isSignedIn = isSignedIn;
+      if (this.isSignedIn) {
+        this.userName = this.$gapi.getUserData().fullName;
+      }
+    });
+    this.isLoading = false;
   },
 
   methods: {
-    login() {
-      let that = this;
-      this.$gapi.login().then(function() {
-        that.loadCalendarList();
-        that.displayUserName();
-      });
-    },
-
-    logout() {
-      this.$gapi.logout();
-      this.userName = '';
-      this.$store.commit('clearEvents');
-    },
-
-    loadEvent() {
-      this.$store.dispatch('loadEvent');
-    },
-
-    loadCalendarList() {
-      this.$store.dispatch('loadCalendarList').then(() => {
-        return this.loadEvent();
-      });
-    },
-
-    displayUserName() {
-      let user = this.$gapi.getUserData();
-
-      if (user) {
-        this.userName = user.email;
+    async login() {
+      try {
+        await this.$gapi.login();
+        let user = await this.$gapi.getUserData();
+        this.updateSigninStatus();
+        this.userName = user.fullName;
+      } catch (error) {
+        console.log(error);
       }
+    },
+    async logout() {
+      try {
+        await this.$gapi.logout();
+        this.updateSigninStatus();
+        this.userName = '';
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    updateSigninStatus() {
+      this.isSignedIn = !this.isSignedIn;
     },
   },
 };
@@ -123,8 +110,7 @@ $button-active-blue: #1669f2;
     top: 2px;
   }
   .btn-text {
-    color: $white;
-    font-size: 20pxpx;
+    color: $google-blue;
     letter-spacing: 0.2px;
     font-family: 'Roboto';
   }
