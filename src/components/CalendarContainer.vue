@@ -28,7 +28,7 @@
             <v-toolbar-title> {{ year }} 年 {{ month }} 月 </v-toolbar-title>
             <v-spacer></v-spacer>
             <!-- menu: add item-->
-            <AddEvent />
+            <CreateEvent />
             <!-- change show range -->
             <CalendarRange />
           </v-toolbar>
@@ -42,13 +42,12 @@
 </template>
 
 <script>
-// import moment from 'moment';
-import AddEvent from './AddEvent.vue';
+import CreateEvent from './CreateEvent.vue';
 import CalendarEvent from './CalendarEvent.vue';
 import CalendarRange from './CalendarRange.vue';
 
 export default {
-  components: { AddEvent, CalendarEvent, CalendarRange },
+  components: { CreateEvent, CalendarEvent, CalendarRange },
   name: 'CalendarContainer',
 
   data: () => ({}),
