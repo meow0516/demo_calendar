@@ -1,9 +1,7 @@
 <template>
-  <!-- show range -->
   <v-menu bottom right>
     <template v-slot:activator="{ on, attrs }">
       <v-btn outlined color="grey darken-2" v-bind="attrs" v-on="on">
-        <!-- <span>{{ typeToLabel[type] }}</span> -->
         <span>{{ typeToLabel }}</span>
         <v-icon right>
           mdi-menu-down
@@ -11,16 +9,16 @@
       </v-btn>
     </template>
     <v-list>
-      <v-list-item @click="changeRangeDay()">
+      <v-list-item @click="changeRange('day')">
         <v-list-item-title>Day</v-list-item-title>
       </v-list-item>
-      <v-list-item @click="changeRangeWeek()">
+      <v-list-item @click="changeRange('week')">
         <v-list-item-title>Week</v-list-item-title>
       </v-list-item>
-      <v-list-item @click="changeRangeMonth()">
+      <v-list-item @click="changeRange('month')">
         <v-list-item-title>Month</v-list-item-title>
       </v-list-item>
-      <v-list-item @click="changeRange4Day()">
+      <v-list-item @click="changeRange('4day')">
         <v-list-item-title>4 days</v-list-item-title>
       </v-list-item>
     </v-list>
@@ -34,20 +32,8 @@ export default {
   data: () => ({}),
   mounted() {},
   methods: {
-    changeRangeDay() {
-      this.type = 'day';
-      this.$store.commit('changeRange', this.type);
-    },
-    changeRangeWeek() {
-      this.type = 'week';
-      this.$store.commit('changeRange', this.type);
-    },
-    changeRangeMonth() {
-      this.type = 'month';
-      this.$store.commit('changeRange', this.type);
-    },
-    changeRange4Day() {
-      this.type = '4day';
+    changeRange(rangeType) {
+      this.type = rangeType;
       this.$store.commit('changeRange', this.type);
     },
   },
